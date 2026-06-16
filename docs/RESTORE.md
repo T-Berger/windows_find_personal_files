@@ -1,17 +1,30 @@
-# Restore Guide — Windows 10 (Draft)
+# Restore Guide — Windows 10
 
-This document will describe how to restore personal data from a `wpa` archive onto a fresh Windows 10 machine.
+## Automated restore (`wpa restore`)
 
-## Planned Steps (v1 — manual)
+```powershell
+# Preview what would be restored
+uv run wpa restore -o E:\migration.zip --dry-run
 
-1. Copy archive folder or extract ZIP to local disk on target PC.
-2. Review `META/summary.txt` and `META/manifest.json` for completeness.
-3. Create target user account if it does not match source username.
-4. Copy contents of `USERS/<username>/PROFILE/*` to `C:\Users\<username>\` preserving subfolders.
-5. Copy `USERS/<username>/APPDATA/*` into `C:\Users\<username>\AppData\`.
-6. Copy `DRIVE_ROOTS/*` to corresponding drive letters (see path mapping in manifest).
-7. Re-run any installers for applications (browsers, Office, etc.) — data files may activate after app install.
+# Restore with username mapping (source PC user → target PC user)
+uv run wpa restore -o E:\migration.zip --user-map olduser:newuser --yes
 
-## Automated Restore
+# Custom target drive
+uv run wpa restore -o E:\migration.zip --target-drive D: --yes
+```
 
-The `wpa restore` command is **backlog v1.1** — see `docs/REQUIREMENTS.md` §9.
+Manifest and metadata for ZIP archives live beside the archive: `migration_meta/META/`.
+
+## Manual restore (if needed)
+
+1. Extract `migration.zip` or use the folder archive directly.
+2. Review `META/summary.txt` and `META/manifest.json`.
+3. Copy `USERS/<user>/PROFILE/*` → `C:\Users\<user>\`
+4. Copy `USERS/<user>/APPDATA/*` → `C:\Users\<user>\AppData\`
+5. Copy `DRIVE_ROOTS/<drive>_/*` → corresponding drive letter.
+6. Reinstall browsers, Office, Thunderbird, etc. — data files often activate after app install.
+
+## Notes
+
+- Close browsers and Outlook before archiving for best results; re-run archive if files were in use.
+- Archives contain sensitive data — store on trusted media only (no encryption in v1).
