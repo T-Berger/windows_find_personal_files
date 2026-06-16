@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = ["crates/wpa_scan"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/thoma/windows_find_personal_files"
+
+[profile.release]
+lto = true
+codegen-units = 1
