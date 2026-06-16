@@ -129,7 +129,7 @@ Manual copy-paste is error-prone. This project provides an **open-source, repeat
 2. **Destination** is external USB, network share, or second internal drive with enough free space.
 3. Target machine is **Windows 10** (64-bit) for restore UX.
 4. User accepts that some **in-use** files (browser DBs, Outlook) may need a second run after closing apps.
-5. Open-source license will be **MIT** unless stakeholder chooses otherwise (see open questions).
+5. Open-source license is **GPL-3.0-or-later** (see `docs/DECISIONS.md`).
 
 ---
 
@@ -150,7 +150,7 @@ Manual copy-paste is error-prone. This project provides an **open-source, repeat
 | B-02 | `restore` subcommand with interactive path mapping |
 | B-03 | Optional AES archive encryption |
 | B-04 | Export list of installed programs (winget/winget export) as metadata only |
-| B-05 | Rust core for scan performance (optional hybrid) |
+| B-05 | ~~Rust core for scan performance~~ — **in v1** (`crates/wpa_scan`) |
 
 ---
 
@@ -169,18 +169,20 @@ All other applicable standards apply: `uv`, `ruff`, `pyright` strict, `pyproject
 
 ---
 
-## 11. Open Questions (Stakeholder Input Needed)
+## 11. Stakeholder Decisions
 
-Please confirm or adjust:
+Locked — see **`docs/DECISIONS.md`**.
 
-1. **Definition of "personal"** — Default = user profiles + AppData + non-system paths on all drives with exclusion list. Should we also include **entire drive scan** minus exclusions (broader), or **profile-only** (narrower)?
-2. **Archive format** — ZIP default OK? Need 7z for better compression?
-3. **Encryption** — Required for v1, or plaintext on encrypted USB is enough?
-4. **License** — MIT (permissive) vs GPL (copyleft)?
-5. **Language** — Python-only for v1 (recommended for OSS contributors), or Rust core from start?
-6. **Browser/email** — Explicit modules for Chrome/Firefox/Thunderbird/Outlook paths, or generic AppData scan only?
-7. **Multiple users** — Archive all local user profiles on the PC, or only the running user?
-8. **Restore scope for v1** — Documentation only, or implement `restore` in first release?
+| Question | Decision |
+|----------|----------|
+| Scan scope | Entire drive minus exclusions |
+| Archive format | Single ZIP |
+| Encryption | None |
+| License | GPL-3.0-or-later |
+| Language | Python + Rust (scan performance) |
+| Browsers/email | Explicit known apps + full AppData |
+| Users | All profiles |
+| Restore | `wpa restore` in v1 |
 
 ---
 
@@ -189,3 +191,4 @@ Please confirm or adjust:
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 0.1.0 | 2026-06-16 | Initial draft | Baseline requirements from stakeholder goal |
+| 0.2.0 | 2026-06-16 | Stakeholder lock-in | Decisions recorded in DECISIONS.md |
