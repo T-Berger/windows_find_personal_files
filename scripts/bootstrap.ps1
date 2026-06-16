@@ -10,5 +10,8 @@ if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
 
 uv python install 3.12
 uv sync --group dev
+if (Get-Command cargo -ErrorAction SilentlyContinue) {
+    cargo build --release -p wpa-scan
+}
 
 Write-Host "Done. Try: uv run wpa --help"

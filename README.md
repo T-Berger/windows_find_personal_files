@@ -2,7 +2,7 @@
 
 Open-source CLI tool to **find and archive personal files** across all local drives on a Windows PC, producing a structured archive and manifest so you can restore on another **Windows 10** machine without losing personal data.
 
-**Status:** Requirements and specification complete — implementation in progress (v0.1.0).
+**Status:** v0.1.0 — scan, archive, verify, and restore implemented.
 
 ## Why this exists
 
@@ -12,50 +12,48 @@ Migrating away from Windows (or to a new Windows PC) means tracking down files i
 
 | Document | Purpose |
 |----------|---------|
-| [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) | Goals, functional/non-functional requirements, open questions |
-| [docs/SPEC.md](docs/SPEC.md) | Architecture, archive layout, CLI, manifest schema |
-| [docs/RESTORE.md](docs/RESTORE.md) | Windows 10 restore guide (draft) |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Locked stakeholder decisions |
+| [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) | Goals and requirements |
+| [docs/SPEC.md](docs/SPEC.md) | Architecture, archive layout, CLI |
+| [docs/RESTORE.md](docs/RESTORE.md) | Windows 10 restore guide |
 
-## Quick start (developers)
+## Quick start
 
-Requires [uv](https://docs.astral.sh/uv/) and Python 3.12+.
+Requires [uv](https://docs.astral.sh/uv/), Python 3.12+, and [Rust](https://rustup.rs/) (for fast scanning).
 
 ```powershell
 # Windows — from repo root
 .\scripts\bootstrap.ps1
-uv run wpa --help
+uv run wpa scan -o E:\migration_preview
+uv run wpa archive -o E:\migration.zip
+uv run wpa verify -o E:\migration.zip
+uv run wpa restore -o E:\migration.zip --user-map olduser:newuser -y
 ```
 
 ```bash
-# Linux/macOS — run tests only (Windows APIs stubbed in CI)
-uv sync
+# Linux/macOS — tests use fixture tree (Python walker fallback)
+uv sync --group dev
+cargo test
 uv run pytest
 ```
 
-## Planned CLI
+## CLI
 
-```powershell
-wpa scan --output E:\migration --dry-run      # inventory only
-wpa archive --output E:\migration             # copy + manifest
-wpa verify --output E:\migration              # integrity check
-```
+| Command | Description |
+|---------|-------------|
+| `wpa scan` | Dry-run inventory + manifest (no file copy) |
+| `wpa archive` | Full-drive scan → single ZIP (or folder) |
+| `wpa verify` | Check archive against manifest |
+| `wpa restore` | Copy files back to Windows user paths |
+
+Scan uses the Rust `wpa-scan` binary when built (`target/release/wpa-scan.exe`); falls back to Python on Linux CI.
 
 ## Engineering standards
 
-This repo follows the project boilerplate spec:
-
-- **uv** for dependencies (no global pip installs)
-- **ruff** for lint + format
-- **pyright** strict mode
-- **pytest** for tests
-- CI on every PR
-
-Docker/IaC sections of the boilerplate are **not applicable** for this local Windows CLI — see `docs/REQUIREMENTS.md` §10.
+- **uv** + **ruff** + **pyright** strict + **pytest**
+- **Rust** (`crates/wpa_scan`) for filesystem walk performance
+- CI on every PR (Rust + Python)
 
 ## License
 
-MIT (pending stakeholder confirmation — see open questions in REQUIREMENTS.md).
-
-## Contributing
-
-Implementation has not started yet. See `docs/SPEC.md` for module layout and `docs/REQUIREMENTS.md` §11 for decisions still needed from the project owner.
+GPL-3.0-or-later — see [LICENSE](LICENSE).

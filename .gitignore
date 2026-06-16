@@ -26,5 +26,6 @@ wpa.yaml
 *.log
 
 # Test / migration artifacts
+target/
 migration_*/
 *.zip
