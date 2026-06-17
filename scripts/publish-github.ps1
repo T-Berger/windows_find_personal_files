@@ -26,8 +26,10 @@ $runId = & $gh run list --branch master --workflow CI --limit 1 --json databaseI
 & $gh run watch $runId --exit-status
 
 Write-Host "Creating tag and release $Version..."
-& git tag -a $Version -m "Windows Personal Archive $Version" -f
-& git push origin $Version -f
+if (-not (git rev-parse $Version 2>$null)) {
+    & git tag -a $Version -m "Windows Personal Archive $Version"
+}
+& git push origin $Version
 
 $releaseBody = @"
 ## Windows Personal Archive $Version
@@ -35,14 +37,20 @@ $releaseBody = @"
 First public release.
 
 - Scan, archive, verify, and restore personal files across Windows drives
-- Rust fast walker (`wpa-scan`) with Python CLI (`wpa`)
+- Rust fast walker (wpa-scan) with Python CLI (wpa)
 - Structured archive layout with manifest for audit and restore
 - GPL-3.0-or-later
 
 See [README](https://github.com/T-Berger/windows_find_personal_files/blob/master/README.md) for quick start.
 "@
 
-& $gh release create $Version --title "Windows Personal Archive $Version" --notes $releaseBody
+$existingRelease = & $gh release view $Version --json id --jq .id 2>$null
+if ($existingRelease) {
+    Write-Host "Release $Version already exists; updating notes..."
+    & $gh release edit $Version --title "Windows Personal Archive $Version" --notes $releaseBody
+} else {
+    & $gh release create $Version --title "Windows Personal Archive $Version" --notes $releaseBody
+}
 
 Write-Host "Setting repository topics and description..."
 & $gh repo edit `
