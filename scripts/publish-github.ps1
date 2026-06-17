@@ -15,6 +15,18 @@ function Find-Gh {
     throw "GitHub CLI (gh) not found. Install: winget install GitHub.cli"
 }
 
+function Test-GitTag {
+    param([string]$Tag)
+    & git show-ref --verify --quiet "refs/tags/$Tag"
+    return $LASTEXITCODE -eq 0
+}
+
+function Test-GhRelease {
+    param([string]$Tag, [string]$GhPath)
+    & $GhPath release view $Tag --json id --jq .id 2>$null | Out-Null
+    return $LASTEXITCODE -eq 0
+}
+
 $gh = Find-Gh
 & $gh auth status
 
@@ -26,8 +38,10 @@ $runId = & $gh run list --branch master --workflow CI --limit 1 --json databaseI
 & $gh run watch $runId --exit-status
 
 Write-Host "Creating tag and release $Version..."
-if (-not (git rev-parse $Version 2>$null)) {
+if (-not (Test-GitTag $Version)) {
     & git tag -a $Version -m "Windows Personal Archive $Version"
+} else {
+    Write-Host "Tag $Version already exists locally; skipping tag creation."
 }
 & git push origin $Version
 
@@ -44,8 +58,7 @@ First public release.
 See [README](https://github.com/T-Berger/windows_find_personal_files/blob/master/README.md) for quick start.
 "@
 
-$existingRelease = & $gh release view $Version --json id --jq .id 2>$null
-if ($existingRelease) {
+if (Test-GhRelease $Version $gh) {
     Write-Host "Release $Version already exists; updating notes..."
     & $gh release edit $Version --title "Windows Personal Archive $Version" --notes $releaseBody
 } else {
