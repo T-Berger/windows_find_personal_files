@@ -42,7 +42,12 @@ class ZipArchiveWriter(ArchiveWriter):
     def __init__(self, zip_path: Path) -> None:
         self._zip_path = zip_path
         self._zip_path.parent.mkdir(parents=True, exist_ok=True)
-        self._zip = zipfile.ZipFile(self._zip_path, "w", compression=zipfile.ZIP_DEFLATED)
+        self._zip = zipfile.ZipFile(
+            self._zip_path,
+            "w",
+            compression=zipfile.ZIP_DEFLATED,
+            strict_timestamps=False,
+        )
         self.meta_dir = self._zip_path.parent / f"{self._zip_path.stem}_meta"
         self.meta_dir.mkdir(parents=True, exist_ok=True)
 

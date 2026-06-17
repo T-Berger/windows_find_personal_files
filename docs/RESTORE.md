@@ -2,18 +2,27 @@
 
 ## Automated restore (`wpa restore`)
 
+From the project folder on Windows:
+
 ```powershell
+cd C:\Users\thoma\Documents\windows_find_personal_files
+
 # Preview what would be restored
-uv run wpa restore -o E:\migration.zip --dry-run
+.\wpa.cmd restore -o migration_file.zip --dry-run
+
+# Restore to same username
+.\wpa.cmd restore -o migration_file.zip --yes
 
 # Restore with username mapping (source PC user → target PC user)
-uv run wpa restore -o E:\migration.zip --user-map olduser:newuser --yes
+.\wpa.cmd restore -o migration_file.zip --user-map thoma:newusername --yes
 
 # Custom target drive
-uv run wpa restore -o E:\migration.zip --target-drive D: --yes
+.\wpa.cmd restore -o migration_file.zip --target-drive D: --yes
 ```
 
-Manifest and metadata for ZIP archives live beside the archive: `migration_meta/META/`.
+Without `wpa.cmd`, use `uv run wpa restore ...` with the same flags.
+
+Manifest and metadata for ZIP archives live beside the archive: `migration_file_meta/META/`.
 
 ## Manual restore (if needed)
 

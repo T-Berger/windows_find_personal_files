@@ -20,7 +20,7 @@ from windows_personal_archive.manifest.writer import write_manifest_json, write_
 from windows_personal_archive.platform.windows import list_fixed_drives, users_root_path
 from windows_personal_archive.scan.classify import classify_path
 from windows_personal_archive.scan.path_map import source_to_archive_path
-from windows_personal_archive.scan.rules import build_exclusion_list
+from windows_personal_archive.scan.rules import build_exclusion_list, output_exclusion_paths
 from windows_personal_archive.scan.walker import walk_files
 
 
@@ -47,7 +47,7 @@ def run_scan(
     roots = plan_scan_roots(config, output_path)
     exclusions = build_exclusion_list(
         config.exclude_prefixes,
-        (output_path.resolve(),),
+        output_exclusion_paths(output_path),
     )
     raw_entries = walk_files(roots, exclusions)
     users_root = users_root_path()

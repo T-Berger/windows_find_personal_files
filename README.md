@@ -24,11 +24,13 @@ Requires [uv](https://docs.astral.sh/uv/), Python 3.12+, and [Rust](https://rust
 ```powershell
 # Windows — from repo root
 .\scripts\bootstrap.ps1
-uv run wpa scan -o E:\migration_preview
-uv run wpa archive -o E:\migration.zip
-uv run wpa verify -o E:\migration.zip
-uv run wpa restore -o E:\migration.zip --user-map olduser:newuser -y
+.\wpa.cmd scan -o E:\migration_preview
+.\wpa.cmd archive -o E:\migration.zip
+.\wpa.cmd verify -o E:\migration.zip
+.\wpa.cmd restore -o E:\migration.zip --user-map olduser:newuser -y
 ```
+
+See [docs/RESTORE.md](docs/RESTORE.md) for full restore steps.
 
 ```bash
 # Linux/macOS — tests use fixture tree (Python walker fallback)

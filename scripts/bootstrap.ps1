@@ -15,3 +15,4 @@ if (Get-Command cargo -ErrorAction SilentlyContinue) {
 }
 
 Write-Host "Done. Try: uv run wpa --help"
+Write-Host "Or from this folder: .\wpa.cmd scan -o E:\preview"

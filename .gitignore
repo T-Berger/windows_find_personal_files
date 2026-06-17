@@ -25,7 +25,10 @@ wpa.yaml
 .env
 *.log
 
-# Test / migration artifacts
+# Test / migration artifacts (never commit personal backups)
 target/
-migration_*/
+migration*/
+*_meta/
+preview_test/
+META/
 *.zip

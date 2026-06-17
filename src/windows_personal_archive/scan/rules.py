@@ -36,6 +36,26 @@ def normalize_path_for_match(path: str) -> str:
     return path.replace("/", "\\").lower()
 
 
+def is_drive_root(path: Path) -> bool:
+    """True for paths like C:\\ that would exclude an entire volume if matched."""
+    resolved = path.resolve()
+    if not resolved.drive:
+        return False
+    return resolved == Path(resolved.drive + "\\")
+
+
+def output_exclusion_paths(output_path: Path) -> tuple[Path, ...]:
+    """Paths to exclude from scan so output artifacts are not re-archived."""
+    paths: list[Path] = []
+    if not is_drive_root(output_path):
+        paths.append(output_path.resolve())
+    if output_path.suffix.lower() == ".zip":
+        paths.append((output_path.parent / f"{output_path.stem}_meta").resolve())
+    else:
+        paths.append((output_path / "META").resolve())
+    return tuple(paths)
+
+
 def build_exclusion_list(
     extra_prefixes: tuple[str, ...] = (),
     extra_paths: tuple[Path, ...] = (),
@@ -45,6 +65,8 @@ def build_exclusion_list(
     for prefix in extra_prefixes:
         exclusions.append(normalize_path_for_match(prefix))
     for path in extra_paths:
+        if is_drive_root(path):
+            continue
         exclusions.append(normalize_path_for_match(str(path.resolve())))
     return exclusions
 
