@@ -24,7 +24,7 @@ pub fn is_excluded(path: &Path, exclusions: &[String]) -> bool {
 }
 
 /// Walk `roots`, skipping excluded directories and emitting file entries.
-pub fn walk_roots(roots: &[PathBuf], exclusions: &[String]) -> Result<Vec<ScanEntry>, io::Error> {
+pub fn walk_roots(roots: &[PathBuf], exclusions: &[String]) -> Vec<ScanEntry> {
     let mut entries = Vec::new();
     for root in roots {
         if !root.exists() {
@@ -60,7 +60,7 @@ pub fn walk_roots(roots: &[PathBuf], exclusions: &[String]) -> Result<Vec<ScanEn
             });
         }
     }
-    Ok(entries)
+    entries
 }
 
 /// Stream JSONL scan results to `writer`.
@@ -127,7 +127,7 @@ mod tests {
         fs::write(root.join("Users").join("alice").join("doc.txt"), b"hi").expect("write");
 
         let exclusions = vec![root.join("Windows").to_string_lossy().to_string()];
-        let entries = walk_roots(&[root.to_path_buf()], &exclusions).expect("walk");
+        let entries = walk_roots(&[root.to_path_buf()], &exclusions);
         assert_eq!(entries.len(), 1);
         assert!(entries[0].path.contains("doc.txt"));
     }
