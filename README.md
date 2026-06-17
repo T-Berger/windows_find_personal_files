@@ -4,6 +4,10 @@ Open-source CLI tool to **find and archive personal files** across all local dri
 
 **Status:** v0.1.0 — scan, archive, verify, and restore implemented.
 
+## Security
+
+Archives can contain passwords, browser profiles, keys, and other personal data. Store migration output only on trusted media, restrict access to the files, and encrypt external drives or cloud copies yourself — `wpa` does not encrypt archives in v1. Treat any archive like a full backup of your private data.
+
 ## Why this exists
 
 Migrating away from Windows (or to a new Windows PC) means tracking down files in user profiles, `AppData`, secondary drives, and ad-hoc folders. Manual copy-paste misses things. `wpa` automates discovery, documents what was copied, and uses a predictable archive layout.

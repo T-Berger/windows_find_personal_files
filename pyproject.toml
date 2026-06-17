@@ -27,8 +27,8 @@ dependencies = [
 wpa = "windows_personal_archive.cli.main:main"
 
 [project.urls]
-Repository = "https://github.com/thoma/windows_find_personal_files"
-Documentation = "https://github.com/thoma/windows_find_personal_files/tree/main/docs"
+Repository = "https://github.com/T-Berger/windows_find_personal_files"
+Documentation = "https://github.com/T-Berger/windows_find_personal_files/tree/master/docs"
 
 [build-system]
 requires = ["hatchling"]
